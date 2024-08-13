@@ -320,7 +320,7 @@ require('lazy').setup({
               height = 0.75, -- Adjust the height (0.5 means 50% of the editor height)
               preview_width = 0.6,
             },
-            path_display = { 'shorten' },
+            path_display = { 'smart' },
           },
           live_grep = {
             layout_config = {
@@ -328,8 +328,17 @@ require('lazy').setup({
               height = 0.75, -- Adjust the height (0.5 means 50% of the editor height)
               preview_width = 0.6,
             },
-            path_display = { 'shorten' },
+            path_display = { 'smart' },
             previewer = true, -- Disable previewer for live_grep picker
+          },
+          buffers = {
+            previewer = true,
+            path_display = { 'smart' },
+            layout_config = {
+              width = 0.9, -- Adjust the width (0.5 means 50% of the editor width)
+              height = 0.75, -- Adjust the height (0.5 means 50% of the editor height)
+              preview_width = 0.6,
+            },
           },
         },
         extensions = {

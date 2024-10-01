@@ -1,4 +1,24 @@
 -- P.S. You can delete this when you're done too. It's your config now! :)
+vim.opt.termguicolors = true
+
+-- Set the maximum text width
+vim.opt.textwidth = 100
+
+-- Enable line wrapping
+vim.opt.wrap = true
+
+-- Wrap at word boundaries
+vim.opt.linebreak = true
+
+-- Indent wrapped lines
+vim.opt.breakindent = true
+
+-- Add some indentation to wrapped lines
+vim.opt.breakindentopt = 'shift:2'
+
+-- Show a symbol at the start of wrapped lines
+vim.opt.showbreak = '↪ '
+
 vim.filetype.add {
   extension = {
     mdx = 'markdown.mdx',
@@ -24,7 +44,7 @@ vim.g.have_nerd_font = true
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
-vim.opt.relativenumber = true
+vim.opt.relativenumber = false
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -36,10 +56,6 @@ vim.opt.showmode = false
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
 vim.opt.clipboard = 'unnamedplus'
-
--- Enable break indent
-vim.opt.breakindent = true
-vim.o.showbreak = ' '
 
 -- Save undo history
 vim.opt.undofile = true
@@ -56,7 +72,7 @@ vim.opt.updatetime = 250
 
 -- Decrease mapped sequence wait time
 -- Displays which-key popup sooner
-vim.opt.timeoutlen = 300
+vim.opt.timeoutlen = 200
 
 -- Configure how new splits should be opened
 vim.opt.splitright = true
@@ -691,8 +707,11 @@ require('lazy').setup({
             luasnip.lsp_expand(args.body)
           end,
         },
-        completion = { completeopt = 'menu,menuone,noinsert' },
-
+        completion = {
+          autocomplete = false,
+        },
+        -- completion = { completeopt = 'menu,menuone,noinsert' },
+        --
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
         --
@@ -736,24 +755,6 @@ require('lazy').setup({
           { name = 'path' },
         },
       }
-    end,
-  },
-
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-    init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      -- vim.cmd.colorscheme 'tokyonight-night'
-
-      -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
     end,
   },
 
@@ -809,7 +810,6 @@ require('lazy').setup({
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
         --  If you are experiencing weird indenting issues, add the language to
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
       },
       indent = { enable = true, disable = { 'ruby' } },
     },
@@ -908,5 +908,7 @@ vim.api.nvim_set_keymap('n', '<leader>ww', '<C-w>w', { noremap = true, silent = 
 -- vim: ts=2 sts=2 sw=2 et
 --
 --
+vim.opt.laststatus = 3
+vim.opt.cmdheight = 0
 vim.o.background = 'dark' -- or "light" for light mode
-vim.cmd [[colorscheme kanagawa-paper]]
+vim.cmd [[colorscheme nordic]]

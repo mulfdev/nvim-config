@@ -20,68 +20,12 @@ return {
       vim.g['prettier#quickfix_enabled'] = 1
     end,
   },
-
-  {
-    'ellisonleao/gruvbox.nvim',
-    priority = 1000,
-    config = function()
-      require('gruvbox').setup {
-        contrast = 'hard',
-      }
-    end,
-    opts = {},
-  },
-  {
-    'catppuccin/nvim',
-    name = 'catppuccin',
-    flavour = 'mocha',
-    priority = 1000,
-    opts = {
-      no_italic = true,
-      term_colors = true,
-      transparent_background = false,
-      styles = {
-        comments = {},
-        conditionals = {},
-        loops = {},
-        functions = {},
-        keywords = {},
-        strings = {},
-        variables = {},
-        numbers = {},
-        booleans = {},
-        properties = {},
-        types = {},
-      },
-      integrations = {
-        telescope = {
-          enabled = true,
-        },
-      },
-    },
-  },
-  {
-    'AlexvZyl/nordic.nvim',
-    lazy = false,
-    priority = 1000,
-    config = function()
-      require('nordic').load()
-    end,
-  },
+  { 'ellisonleao/glow.nvim', config = true, cmd = 'Glow' },
   {
     'sho-87/kanagawa-paper.nvim',
     lazy = false,
     priority = 1000,
     opts = {},
   },
-  {
-    'toppair/peek.nvim',
-    event = { 'VeryLazy' },
-    build = 'deno task --quiet build:fast',
-    config = function()
-      require('peek').setup()
-      vim.api.nvim_create_user_command('PeekOpen', require('peek').open, {})
-      vim.api.nvim_create_user_command('PeekClose', require('peek').close, {})
-    end,
-  },
+  { 'AlexvZyl/nordic.nvim' },
 }

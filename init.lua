@@ -1,6 +1,8 @@
 -- P.S. You can delete this when you're done too. It's your config now! :)
 vim.opt.termguicolors = true
 
+vim.g.loaded_health = 1
+
 -- Set the maximum text width
 vim.opt.textwidth = 100
 
@@ -103,7 +105,6 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
@@ -170,16 +171,40 @@ require('lazy').setup({
     config = function()
       require('lualine').setup {
         options = {
-          theme = 'auto',
+          theme = {
+            normal = {
+              a = { fg = '#18191a', bg = '#7894ab' },
+              b = { fg = '#e6e6e6', bg = '#282a2b' }, -- Lighter background, slightly brighter text
+              c = { fg = '#e6e6e6', bg = '#282a2b' }, -- Lighter background, slightly brighter text
+            },
+            insert = { a = { fg = '#18191a', bg = '#8faf77' } },
+            visual = { a = { fg = '#18191a', bg = '#b9a3ba' } },
+            replace = { a = { fg = '#18191a', bg = '#d2788c' } },
+            inactive = {
+              a = { fg = '#8a8a99', bg = '#282a2b' }, -- Adjusted to match the new normal background
+              b = { fg = '#8a8a99', bg = '#282a2b' }, -- Adjusted to match the new normal background
+              c = { fg = '#8a8a99', bg = '#282a2b' }, -- Adjusted to match the new normal background
+            },
+          },
           component_separators = '|',
           section_separators = '',
         },
         sections = {
-          lualine_a = {},
-          lualine_b = { 'branch' },
-          lualine_c = { 'filename' },
-          lualine_x = { 'filetype' },
-          lualine_y = {},
+          lualine_a = { 'mode' },
+          lualine_b = { { 'branch' }, {
+            'diff',
+            symbols = { added = '+', modified = '~', removed = '-' },
+          } },
+          lualine_c = {},
+          lualine_x = { '' },
+          lualine_y = {
+            { 'filename', icon = 'file:' },
+            {
+              'diagnostics',
+              sources = { 'nvim_diagnostic' },
+              symbols = { error = 'Err:', warn = 'Warn: ', info = 'Info: ', hint = 'Hint: ' },
+            },
+          },
           lualine_z = { 'location' },
         },
         inactive_sections = {
@@ -243,28 +268,28 @@ require('lazy').setup({
   -- after the plugin has been loaded:
   --  config = function() ... end
 
-  { -- Useful plugin to show you pending keybinds.
-    'folke/which-key.nvim',
-    event = 'VimEnter', -- Sets the loading event to 'VimEnter'
-    config = function() -- This is the function that runs, AFTER loading
-      require('which-key').setup()
-
-      -- Document existing key chains
-      require('which-key').register {
-        ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-        ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
-        ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
-        ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-        ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
-        ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
-        ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
-      }
-      -- visual mode
-      require('which-key').register({
-        ['<leader>h'] = { 'Git [H]unk' },
-      }, { mode = 'v' })
-    end,
-  },
+  -- { -- Useful plugin to show you pending keybinds.
+  --   'folke/which-key.nvim',
+  --   event = 'VimEnter', -- Sets the loading event to 'VimEnter'
+  --   config = function() -- This is the function that runs, AFTER loading
+  --     require('which-key').setup()
+  --
+  --     -- Document existing key chains
+  --     require('which-key').register {
+  --       ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
+  --       ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
+  --       ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
+  --       ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
+  --       ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+  --       ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
+  --       ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
+  --     }
+  --     -- visual mode
+  --     require('which-key').register({
+  --       ['<leader>h'] = { 'Git [H]unk' },
+  --     }, { mode = 'v' })
+  --   end,
+  -- },
 
   -- NOTE: Plugins can specify dependencies.
   --
@@ -328,6 +353,10 @@ require('lazy').setup({
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
         --   },
         -- },
+        defaults = {
+
+          winblend = 3,
+        },
         pickers = {
           find_files = {
             previewer = true, -- Disable previewer for find_files picker
@@ -908,7 +937,45 @@ vim.api.nvim_set_keymap('n', '<leader>ww', '<C-w>w', { noremap = true, silent = 
 -- vim: ts=2 sts=2 sw=2 et
 --
 --
-vim.opt.laststatus = 3
+vim.opt.laststatus = 2
 vim.opt.cmdheight = 0
 vim.o.background = 'dark' -- or "light" for light mode
-vim.cmd [[colorscheme nordic]]
+
+-- Set up custom highlight groups for floating windows with 3% transparency and darker background
+vim.cmd [[
+  augroup CustomFloatingColors
+    autocmd!
+    autocmd ColorScheme * highlight FloatBorder guifg=#a0a0a0 guibg=#1c1d1e blend=3
+    autocmd ColorScheme * highlight NormalFloat guibg=#1c1d1e blend=3
+    autocmd ColorScheme * highlight SignatureHelpHeader guifg=#9ab5cc guibg=#1c1d1e blend=3
+    autocmd ColorScheme * highlight SignatureHelpParameter guifg=#cbb5cc guibg=#1c1d1e blend=3
+    autocmd ColorScheme * highlight TelescopeNormal guibg=#1c1d1e blend=3
+    autocmd ColorScheme * highlight TelescopeBorder guifg=#a0a0a0 guibg=#1c1d1e blend=3
+    autocmd ColorScheme * highlight TelescopePromptNormal guibg=#1c1d1e blend=3
+    autocmd ColorScheme * highlight TelescopeResultsNormal guibg=#1c1d1e blend=3
+    autocmd ColorScheme * highlight TelescopeSelection guibg=#2d2d33 guifg=#e6cab7 blend=3
+    autocmd ColorScheme * highlight TelescopeSelectionCaret guifg=#e6cab7 guibg=#2d2d33 blend=3
+  augroup END
+]]
+
+-- Apply the colorscheme again to trigger the autocommands
+vim.cmd 'colorscheme vague'
+
+-- Set up borders for floating windows
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
+  border = 'rounded',
+})
+
+vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+  border = 'rounded',
+})
+
+-- Additional highlights for better contrast, with 3% transparency
+vim.cmd [[
+  highlight SignatureHelpBorder guifg=#a0a0a0 guibg=#1c1d1e blend=3
+  highlight LspSignatureActiveParameter guifg=#e6cab7 guibg=#2d2d33 blend=3
+]]
+
+-- Enable 3% transparency globally (if your Neovim version supports it)
+vim.opt.winblend = 3
+vim.opt.pumblend = 3

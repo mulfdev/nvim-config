@@ -165,6 +165,7 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
@@ -173,17 +174,26 @@ require('lazy').setup({
         options = {
           theme = {
             normal = {
-              a = { fg = '#18191a', bg = '#7894ab' },
-              b = { fg = '#e6e6e6', bg = '#282a2b' }, -- Lighter background, slightly brighter text
-              c = { fg = '#e6e6e6', bg = '#282a2b' }, -- Lighter background, slightly brighter text
+              a = { fg = '#1F1F1F', bg = '#7FB4CA', gui = 'bold' },
+              b = { fg = '#c5c9c5', bg = '#1F1F1F' },
+              c = { fg = '#a6a69c', bg = '#1F1F1F' },
             },
-            insert = { a = { fg = '#18191a', bg = '#8faf77' } },
-            visual = { a = { fg = '#18191a', bg = '#b9a3ba' } },
-            replace = { a = { fg = '#18191a', bg = '#d2788c' } },
+            insert = {
+              a = { fg = '#1F1F1F', bg = '#87a987', gui = 'bold' },
+            },
+            visual = {
+              a = { fg = '#1F1F1F', bg = '#938AA9', gui = 'bold' },
+            },
+            replace = {
+              a = { fg = '#1F1F1F', bg = '#c4746e', gui = 'bold' },
+            },
+            command = {
+              a = { fg = '#1F1F1F', bg = '#c4b28a', gui = 'bold' },
+            },
             inactive = {
-              a = { fg = '#8a8a99', bg = '#282a2b' }, -- Adjusted to match the new normal background
-              b = { fg = '#8a8a99', bg = '#282a2b' }, -- Adjusted to match the new normal background
-              c = { fg = '#8a8a99', bg = '#282a2b' }, -- Adjusted to match the new normal background
+              a = { fg = '#8a9a7b', bg = '#1F1F1F' },
+              b = { fg = '#8a9a7b', bg = '#1F1F1F' },
+              c = { fg = '#8a9a7b', bg = '#1F1F1F' },
             },
           },
           component_separators = '|',
@@ -353,10 +363,6 @@ require('lazy').setup({
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
         --   },
         -- },
-        defaults = {
-
-          winblend = 3,
-        },
         pickers = {
           find_files = {
             previewer = true, -- Disable previewer for find_files picker
@@ -940,42 +946,4 @@ vim.api.nvim_set_keymap('n', '<leader>ww', '<C-w>w', { noremap = true, silent = 
 vim.opt.laststatus = 2
 vim.opt.cmdheight = 0
 vim.o.background = 'dark' -- or "light" for light mode
-
--- Set up custom highlight groups for floating windows with 3% transparency and darker background
-vim.cmd [[
-  augroup CustomFloatingColors
-    autocmd!
-    autocmd ColorScheme * highlight FloatBorder guifg=#a0a0a0 guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight NormalFloat guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight SignatureHelpHeader guifg=#9ab5cc guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight SignatureHelpParameter guifg=#cbb5cc guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight TelescopeNormal guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight TelescopeBorder guifg=#a0a0a0 guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight TelescopePromptNormal guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight TelescopeResultsNormal guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight TelescopeSelection guibg=#2d2d33 guifg=#e6cab7 blend=3
-    autocmd ColorScheme * highlight TelescopeSelectionCaret guifg=#e6cab7 guibg=#2d2d33 blend=3
-  augroup END
-]]
-
--- Apply the colorscheme again to trigger the autocommands
-vim.cmd 'colorscheme vague'
-
--- Set up borders for floating windows
-vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
-  border = 'rounded',
-})
-
-vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-  border = 'rounded',
-})
-
--- Additional highlights for better contrast, with 3% transparency
-vim.cmd [[
-  highlight SignatureHelpBorder guifg=#a0a0a0 guibg=#1c1d1e blend=3
-  highlight LspSignatureActiveParameter guifg=#e6cab7 guibg=#2d2d33 blend=3
-]]
-
--- Enable 3% transparency globally (if your Neovim version supports it)
-vim.opt.winblend = 3
-vim.opt.pumblend = 3
+vim.cmd [[colorscheme kanagawa-dragon]]

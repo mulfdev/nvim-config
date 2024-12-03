@@ -13,19 +13,6 @@ return {
   { 'rktjmp/lush.nvim' },
   { 'zenbones-theme/zenbones.nvim', requires = 'rktjmp/lush.nvim' },
   {
-    'sho-87/kanagawa-paper.nvim',
-    lazy = false,
-    priority = 1000,
-    opts = {},
-  },
-  {
-    'slugbyte/lackluster.nvim',
-    lazy = false,
-    priority = 1000,
-  },
-  { 'aktersnurra/no-clown-fiesta.nvim' },
-
-  {
     'vague2k/vague.nvim',
     config = function()
       require('vague').setup {
@@ -34,11 +21,21 @@ return {
     end,
   },
   {
-    'rebelot/kanagawa.nvim',
-    lazy = false,
-    priority = 1000,
-    config = function()
-      require('kanagawa').load()
-    end,
+    'Mofiqul/vscode.nvim',
   },
+  {
+    'catppuccin/nvim',
+    name = 'catppuccin',
+    priority = 1000,
+    opts = {
+      color_overrides = {
+        mocha = {
+          base = '#181818',
+          mantle = '#181818',
+          crust = '#181818',
+        },
+      },
+    },
+  },
+  { 'mellow-theme/mellow.nvim' },
 }

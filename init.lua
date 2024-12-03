@@ -70,7 +70,7 @@ vim.opt.smartcase = true
 vim.opt.signcolumn = 'yes'
 
 -- Decrease update time
-vim.opt.updatetime = 250
+vim.opt.updatetime = 150
 
 -- Decrease mapped sequence wait time
 -- Displays which-key popup sooner
@@ -171,23 +171,7 @@ require('lazy').setup({
     config = function()
       require('lualine').setup {
         options = {
-          theme = {
-            normal = {
-              a = { fg = '#18191a', bg = '#7894ab' },
-              b = { fg = '#e6e6e6', bg = '#282a2b' }, -- Lighter background, slightly brighter text
-              c = { fg = '#e6e6e6', bg = '#282a2b' }, -- Lighter background, slightly brighter text
-            },
-            insert = { a = { fg = '#18191a', bg = '#8faf77' } },
-            visual = { a = { fg = '#18191a', bg = '#b9a3ba' } },
-            replace = { a = { fg = '#18191a', bg = '#d2788c' } },
-            inactive = {
-              a = { fg = '#8a8a99', bg = '#282a2b' }, -- Adjusted to match the new normal background
-              b = { fg = '#8a8a99', bg = '#282a2b' }, -- Adjusted to match the new normal background
-              c = { fg = '#8a8a99', bg = '#282a2b' }, -- Adjusted to match the new normal background
-            },
-          },
-          component_separators = '|',
-          section_separators = '',
+          theme = 'auto',
         },
         sections = {
           lualine_a = { 'mode' },
@@ -345,53 +329,85 @@ require('lazy').setup({
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
-        -- You can put your default mappings / updates / etc. in here
-        --  All the info you're looking for is in `:help telescope.setup()`
-        --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
         defaults = {
+          results_title = false,
+          results_number = { '┃ ', '' },
+          -- Layout configuration
+          layout_strategy = 'horizontal',
+          layout_config = {
+            horizontal = {
+              height = 0.90,
+              preview_cutoff = 100,
+              prompt_position = 'bottom',
+              width = 0.85,
+            },
+            preview_cutoff = 100,
+            prompt_position = 'top',
+          },
 
-          winblend = 3,
+          -- Border settings
+          border = true,
+          borderchars = {
+            { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
+            prompt = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
+            results = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
+            preview = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
+          },
+
+          -- Remove transparency
+          winblend = 0,
+
+          -- Styling
+          prompt_prefix = ' ',
+          selection_caret = ' ',
+
+          -- File ignore patterns (keeping the same ones as before)
+          file_ignore_patterns = {
+            'node_modules/',
+            'dist/',
+            'build/',
+            '.git/',
+            'target/',
+            'Cargo.lock',
+            '*.rs.bk',
+            'go.sum',
+            'vendor/',
+            '*.test',
+            '*_test.go.db',
+            '*.exe',
+            '*.o',
+            '*.a',
+            '*.so',
+            '*.pyc',
+            '*.pyo',
+            '*.dll',
+            '*.dylib',
+            '.idea/',
+            '.vscode/',
+            '.vs/',
+            '*.swp',
+            '*.swo',
+            '.DS_Store',
+          },
         },
         pickers = {
           find_files = {
-            previewer = true, -- Disable previewer for find_files picker
+            previewer = true,
+            hidden = true,
             layout_config = {
-              width = 0.9, -- Adjust the width (0.5 means 50% of the editor width)
-              height = 0.75, -- Adjust the height (0.5 means 50% of the editor height)
-              preview_width = 0.6,
+              height = 0.95,
+              width = 0.95,
             },
-            path_display = { 'smart' },
           },
           live_grep = {
             layout_config = {
-              width = 0.9, -- Adjust the width (0.5 means 50% of the editor width)
-              height = 0.75, -- Adjust the height (0.5 means 50% of the editor height)
-              preview_width = 0.6,
+              height = 0.90,
+              width = 0.85,
             },
-            path_display = { 'smart' },
-            previewer = true, -- Disable previewer for live_grep picker
-          },
-          buffers = {
-            previewer = true,
-            path_display = { 'smart' },
-            layout_config = {
-              width = 0.9, -- Adjust the width (0.5 means 50% of the editor width)
-              height = 0.75, -- Adjust the height (0.5 means 50% of the editor height)
-              preview_width = 0.6,
-            },
-          },
-        },
-        extensions = {
-          ['ui-select'] = {
-            require('telescope.themes').get_dropdown(),
           },
         },
       }
+
       require('oil').setup {
         float = {
           padding = 6,
@@ -411,7 +427,7 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>f', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>st', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>ss', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
@@ -667,9 +683,6 @@ require('lazy').setup({
     opts = {
       notify_on_error = false,
       format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
         local disable_filetypes = { c = true, cpp = true }
         return {
           timeout_ms = 500,
@@ -678,12 +691,43 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use a sub-list to tell conform to run *until* a formatter
-        -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
+        javascript = { 'prettier' },
+        typescript = { 'prettier' },
+        javascriptreact = { 'prettier' },
+        typescriptreact = { 'prettier' },
+        json = { 'prettier' },
+        html = { 'prettier' },
+        css = { 'prettier' },
+        scss = { 'prettier' },
+        markdown = { 'prettier' },
+        solidity = { 'prettier' },
+      },
+      formatters = {
+        prettier = {
+          prepend_args = {
+            '--tab-width',
+            '4',
+            '--print-width',
+            '100',
+            '--semi',
+            'true',
+            '--single-quote',
+            'false',
+            '--trailing-comma',
+            'all',
+            '--bracket-spacing',
+            'true',
+            '--bracket-same-line',
+            'false',
+            '--arrow-parens',
+            'always',
+            '--end-of-line',
+            'lf',
+          },
+          command = function()
+            return vim.fn.executable './node_modules/.bin/prettier' == 1 and './node_modules/.bin/prettier' or 'prettier'
+          end,
+        },
       },
     },
   },
@@ -942,24 +986,24 @@ vim.opt.cmdheight = 0
 vim.o.background = 'dark' -- or "light" for light mode
 
 -- Set up custom highlight groups for floating windows with 3% transparency and darker background
-vim.cmd [[
-  augroup CustomFloatingColors
-    autocmd!
-    autocmd ColorScheme * highlight FloatBorder guifg=#a0a0a0 guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight NormalFloat guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight SignatureHelpHeader guifg=#9ab5cc guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight SignatureHelpParameter guifg=#cbb5cc guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight TelescopeNormal guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight TelescopeBorder guifg=#a0a0a0 guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight TelescopePromptNormal guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight TelescopeResultsNormal guibg=#1c1d1e blend=3
-    autocmd ColorScheme * highlight TelescopeSelection guibg=#2d2d33 guifg=#e6cab7 blend=3
-    autocmd ColorScheme * highlight TelescopeSelectionCaret guifg=#e6cab7 guibg=#2d2d33 blend=3
-  augroup END
-]]
+-- vim.cmd [[
+--   augroup CustomFloatingColors
+--     autocmd!
+--     autocmd ColorScheme * highlight FloatBorder guifg=#a0a0a0 guibg=#1c1d1e blend=3
+--     autocmd ColorScheme * highlight NormalFloat guibg=#1c1d1e blend=3
+--     autocmd ColorScheme * highlight SignatureHelpHeader guifg=#9ab5cc guibg=#1c1d1e blend=3
+--     autocmd ColorScheme * highlight SignatureHelpParameter guifg=#cbb5cc guibg=#1c1d1e blend=3
+--     autocmd ColorScheme * highlight TelescopeNormal guibg=#1c1d1e blend=3
+--     autocmd ColorScheme * highlight TelescopeBorder guifg=#a0a0a0 guibg=#1c1d1e blend=3
+--     autocmd ColorScheme * highlight TelescopePromptNormal guibg=#1c1d1e blend=3
+--     autocmd ColorScheme * highlight TelescopeResultsNormal guibg=#1c1d1e blend=3
+--     autocmd ColorScheme * highlight TelescopeSelection guibg=#2d2d33 guifg=#e6cab7 blend=3
+--     autocmd ColorScheme * highlight TelescopeSelectionCaret guifg=#e6cab7 guibg=#2d2d33 blend=3
+--   augroup END
+-- ]]
 
 -- Apply the colorscheme again to trigger the autocommands
-vim.cmd 'colorscheme vague'
+vim.cmd 'colorscheme mellow'
 
 -- Set up borders for floating windows
 vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
@@ -970,12 +1014,19 @@ vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.s
   border = 'rounded',
 })
 
--- Additional highlights for better contrast, with 3% transparency
-vim.cmd [[
-  highlight SignatureHelpBorder guifg=#a0a0a0 guibg=#1c1d1e blend=3
-  highlight LspSignatureActiveParameter guifg=#e6cab7 guibg=#2d2d33 blend=3
-]]
+-- -- Additional highlights for better contrast, with 3% transparency
+-- vim.cmd [[
+--   highlight SignatureHelpBorder guifg=#a0a0a0 guibg=#1c1d1e blend=3
+--   highlight LspSignatureActiveParameter guifg=#e6cab7 guibg=#2d2d33 blend=3
+-- ]]
 
--- Enable 3% transparency globally (if your Neovim version supports it)
-vim.opt.winblend = 3
-vim.opt.pumblend = 3
+vim.api.nvim_set_hl(0, 'TelescopeBorder', { fg = '#5E81AC', bg = '#1a1a1a' })
+vim.api.nvim_set_hl(0, 'TelescopePromptBorder', { fg = '#5E81AC', bg = '#242424' })
+vim.api.nvim_set_hl(0, 'TelescopeResultsBorder', { fg = '#5E81AC', bg = '#1a1a1a' })
+vim.api.nvim_set_hl(0, 'TelescopePreviewBorder', { fg = '#5E81AC', bg = '#1a1a1a' })
+
+vim.api.nvim_set_hl(0, 'TelescopeNormal', { bg = '#1a1a1a', fg = '#ffffff' })
+vim.api.nvim_set_hl(0, 'TelescopePromptNormal', { bg = '#242424', fg = '#ffffff' })
+vim.api.nvim_set_hl(0, 'TelescopeResultsNormal', { bg = '#1a1a1a', fg = '#ffffff' })
+vim.api.nvim_set_hl(0, 'TelescopePreviewNormal', { bg = '#1a1a1a', fg = '#ffffff' })
+vim.api.nvim_set_hl(0, 'TelescopePromptCounter', { fg = '#ffffff', bg = '#242424' })

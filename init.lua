@@ -1,3 +1,5 @@
+vim.keymap.set('n', 'dd', '"_dd')
+
 -- P.S. You can delete this when you're done too. It's your config now! :)
 vim.opt.termguicolors = true
 
@@ -11,12 +13,6 @@ vim.opt.wrap = true
 
 -- Wrap at word boundaries
 vim.opt.linebreak = true
-
--- Indent wrapped lines
-vim.opt.breakindent = true
-
--- Add some indentation to wrapped lines
-vim.opt.breakindentopt = 'shift:2'
 
 -- Show a symbol at the start of wrapped lines
 vim.opt.showbreak = '↪ '
@@ -92,6 +88,7 @@ vim.opt.inccommand = 'split'
 -- Show which line your cursor is on
 vim.opt.cursorline = true
 
+vim.opt.cmdheight = 0
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
@@ -171,7 +168,13 @@ require('lazy').setup({
     config = function()
       require('lualine').setup {
         options = {
-          theme = 'auto',
+          theme = {
+            normal = {
+              a = { bg = '#303030', fg = '#98c379', gui = 'bold' },
+              b = { bg = '#303030', fg = '#abb2bf' },
+              c = { bg = '#303030', fg = '#abb2bf' },
+            },
+          },
         },
         sections = {
           lualine_a = { 'mode' },
@@ -329,85 +332,50 @@ require('lazy').setup({
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
-        defaults = {
-          results_title = false,
-          results_number = { '┃ ', '' },
-          -- Layout configuration
-          layout_strategy = 'horizontal',
-          layout_config = {
-            horizontal = {
-              height = 0.90,
-              preview_cutoff = 100,
-              prompt_position = 'bottom',
-              width = 0.85,
-            },
-            preview_cutoff = 100,
-            prompt_position = 'top',
-          },
-
-          -- Border settings
-          border = true,
-          borderchars = {
-            { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
-            prompt = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
-            results = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
-            preview = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
-          },
-
-          -- Remove transparency
-          winblend = 0,
-
-          -- Styling
-          prompt_prefix = ' ',
-          selection_caret = ' ',
-
-          -- File ignore patterns (keeping the same ones as before)
-          file_ignore_patterns = {
-            'node_modules/',
-            'dist/',
-            'build/',
-            '.git/',
-            'target/',
-            'Cargo.lock',
-            '*.rs.bk',
-            'go.sum',
-            'vendor/',
-            '*.test',
-            '*_test.go.db',
-            '*.exe',
-            '*.o',
-            '*.a',
-            '*.so',
-            '*.pyc',
-            '*.pyo',
-            '*.dll',
-            '*.dylib',
-            '.idea/',
-            '.vscode/',
-            '.vs/',
-            '*.swp',
-            '*.swo',
-            '.DS_Store',
-          },
-        },
+        -- You can put your default mappings / updates / etc. in here
+        --  All the info you're looking for is in `:help telescope.setup()`
+        --
+        -- defaults = {
+        --   mappings = {
+        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+        --   },
+        -- },
+        defaults = {},
         pickers = {
           find_files = {
-            previewer = true,
-            hidden = true,
+            previewer = true, -- Disable previewer for find_files picker
             layout_config = {
-              height = 0.95,
-              width = 0.95,
+              width = 0.9, -- Adjust the width (0.5 means 50% of the editor width)
+              height = 0.75, -- Adjust the height (0.5 means 50% of the editor height)
+              preview_width = 0.6,
             },
+            path_display = { 'smart' },
           },
           live_grep = {
             layout_config = {
-              height = 0.90,
-              width = 0.85,
+              width = 0.9, -- Adjust the width (0.5 means 50% of the editor width)
+              height = 0.75, -- Adjust the height (0.5 means 50% of the editor height)
+              preview_width = 0.6,
+            },
+            path_display = { 'smart' },
+            previewer = true, -- Disable previewer for live_grep picker
+          },
+          buffers = {
+            previewer = true,
+            path_display = { 'smart' },
+            layout_config = {
+              width = 0.9, -- Adjust the width (0.5 means 50% of the editor width)
+              height = 0.75, -- Adjust the height (0.5 means 50% of the editor height)
+              preview_width = 0.6,
             },
           },
         },
+        extensions = {
+          ['ui-select'] = {
+            require('telescope.themes').get_dropdown(),
+          },
+        },
       }
-
       require('oil').setup {
         float = {
           padding = 6,
@@ -723,6 +691,8 @@ require('lazy').setup({
             'always',
             '--end-of-line',
             'lf',
+            '--overrides',
+            '[{"files":"*.{tsx,jsx}","options":{"tabWidth":2}}]',
           },
           command = function()
             return vim.fn.executable './node_modules/.bin/prettier' == 1 and './node_modules/.bin/prettier' or 'prettier'
@@ -981,8 +951,6 @@ vim.api.nvim_set_keymap('n', '<leader>ww', '<C-w>w', { noremap = true, silent = 
 -- vim: ts=2 sts=2 sw=2 et
 --
 --
-vim.opt.laststatus = 2
-vim.opt.cmdheight = 0
 vim.o.background = 'dark' -- or "light" for light mode
 
 -- Set up custom highlight groups for floating windows with 3% transparency and darker background
@@ -1003,7 +971,14 @@ vim.o.background = 'dark' -- or "light" for light mode
 -- ]]
 
 -- Apply the colorscheme again to trigger the autocommands
-vim.cmd 'colorscheme mellow'
+vim.cmd 'colorscheme kanagawa-dragon'
+vim.cmd [[highlight LineNr guibg=NONE]]
+vim.cmd [[highlight SignColumn guibg=NONE]]
+vim.opt.numberwidth = 4
+vim.cmd [[highlight MsgArea guibg=NONE guifg=#DCD7BA]]
+vim.cmd [[highlight GitSignsAdd guibg=NONE guifg=#76946A]]
+vim.cmd [[highlight GitSignsChange guibg=NONE guifg=#DCA561]]
+vim.cmd [[highlight GitSignsDelete guibg=NONE guifg=#C34043]]
 
 -- Set up borders for floating windows
 vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
@@ -1014,19 +989,6 @@ vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.s
   border = 'rounded',
 })
 
--- -- Additional highlights for better contrast, with 3% transparency
--- vim.cmd [[
---   highlight SignatureHelpBorder guifg=#a0a0a0 guibg=#1c1d1e blend=3
---   highlight LspSignatureActiveParameter guifg=#e6cab7 guibg=#2d2d33 blend=3
--- ]]
+vim.lsp.handlers['textDocument/documentHighlight'] = function() end
 
-vim.api.nvim_set_hl(0, 'TelescopeBorder', { fg = '#5E81AC', bg = '#1a1a1a' })
-vim.api.nvim_set_hl(0, 'TelescopePromptBorder', { fg = '#5E81AC', bg = '#242424' })
-vim.api.nvim_set_hl(0, 'TelescopeResultsBorder', { fg = '#5E81AC', bg = '#1a1a1a' })
-vim.api.nvim_set_hl(0, 'TelescopePreviewBorder', { fg = '#5E81AC', bg = '#1a1a1a' })
-
-vim.api.nvim_set_hl(0, 'TelescopeNormal', { bg = '#1a1a1a', fg = '#ffffff' })
-vim.api.nvim_set_hl(0, 'TelescopePromptNormal', { bg = '#242424', fg = '#ffffff' })
-vim.api.nvim_set_hl(0, 'TelescopeResultsNormal', { bg = '#1a1a1a', fg = '#ffffff' })
-vim.api.nvim_set_hl(0, 'TelescopePreviewNormal', { bg = '#1a1a1a', fg = '#ffffff' })
-vim.api.nvim_set_hl(0, 'TelescopePromptCounter', { fg = '#ffffff', bg = '#242424' })
+vim.keymap.set('n', '<leader>t', ':split term://zsh<CR>')

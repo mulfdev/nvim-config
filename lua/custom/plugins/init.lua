@@ -10,8 +10,6 @@ return {
     -- Optional dependencies
     dependencies = { 'nvim-tree/nvim-web-devicons' },
   },
-  { 'rktjmp/lush.nvim' },
-  { 'zenbones-theme/zenbones.nvim', requires = 'rktjmp/lush.nvim' },
   {
     'vague2k/vague.nvim',
     config = function()
@@ -20,22 +18,9 @@ return {
       }
     end,
   },
-  {
-    'Mofiqul/vscode.nvim',
-  },
-  {
-    'catppuccin/nvim',
-    name = 'catppuccin',
-    priority = 1000,
-    opts = {
-      color_overrides = {
-        mocha = {
-          base = '#181818',
-          mantle = '#181818',
-          crust = '#181818',
-        },
-      },
-    },
-  },
   { 'mellow-theme/mellow.nvim' },
+  {
+    'rebelot/kanagawa.nvim',
+  },
+  { 'akinsho/toggleterm.nvim', version = '*', config = true },
 }

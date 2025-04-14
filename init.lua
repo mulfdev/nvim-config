@@ -1,5 +1,3 @@
-vim.keymap.set('n', 'dd', '"_dd')
-
 -- P.S. You can delete this when you're done too. It's your config now! :)
 vim.opt.termguicolors = true
 
@@ -87,6 +85,7 @@ vim.opt.inccommand = 'split'
 
 -- Show which line your cursor is on
 vim.opt.cursorline = true
+vim.opt.cursorlineopt = 'number'
 
 vim.opt.cmdheight = 0
 -- Minimal number of screen lines to keep above and below the cursor.
@@ -168,20 +167,11 @@ require('lazy').setup({
     config = function()
       require('lualine').setup {
         options = {
-          theme = {
-            normal = {
-              a = { bg = '#303030', fg = '#98c379', gui = 'bold' },
-              b = { bg = '#303030', fg = '#abb2bf' },
-              c = { bg = '#303030', fg = '#abb2bf' },
-            },
-          },
+          theme = 'seoul256',
         },
         sections = {
           lualine_a = { 'mode' },
-          lualine_b = { { 'branch' }, {
-            'diff',
-            symbols = { added = '+', modified = '~', removed = '-' },
-          } },
+          lualine_b = { { 'branch' } },
           lualine_c = {},
           lualine_x = { '' },
           lualine_y = {
@@ -192,7 +182,7 @@ require('lazy').setup({
               symbols = { error = 'Err:', warn = 'Warn: ', info = 'Info: ', hint = 'Hint: ' },
             },
           },
-          lualine_z = { 'location' },
+          lualine_z = { '' },
         },
         inactive_sections = {
           lualine_a = {},
@@ -240,51 +230,6 @@ require('lazy').setup({
     },
   },
 
-  -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
-  --
-  -- This is often very useful to both group configuration, as well as handle
-  -- lazy loading plugins that don't need to be loaded immediately at startup.
-  --
-  -- For example, in the following configuration, we use:
-  --  event = 'VimEnter'
-  --
-  -- which loads which-key before all the UI elements are loaded. Events can be
-  -- normal autocommands events (`:help autocmd-events`).
-  --
-  -- Then, because we use the `config` key, the configuration only runs
-  -- after the plugin has been loaded:
-  --  config = function() ... end
-
-  -- { -- Useful plugin to show you pending keybinds.
-  --   'folke/which-key.nvim',
-  --   event = 'VimEnter', -- Sets the loading event to 'VimEnter'
-  --   config = function() -- This is the function that runs, AFTER loading
-  --     require('which-key').setup()
-  --
-  --     -- Document existing key chains
-  --     require('which-key').register {
-  --       ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-  --       ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
-  --       ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
-  --       ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-  --       ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
-  --       ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
-  --       ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
-  --     }
-  --     -- visual mode
-  --     require('which-key').register({
-  --       ['<leader>h'] = { 'Git [H]unk' },
-  --     }, { mode = 'v' })
-  --   end,
-  -- },
-
-  -- NOTE: Plugins can specify dependencies.
-  --
-  -- The dependencies are proper plugin specifications as well - anything
-  -- you do for a plugin at the top level, you can do for a dependency.
-  --
-  -- Use the `dependencies` key to specify the dependencies of a particular plugin
-
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
@@ -310,27 +255,6 @@ require('lazy').setup({
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
-      -- Telescope is a fuzzy finder that comes with a lot of different things that
-      -- it can fuzzy find! It's more than just a "file finder", it can search
-      -- many different aspects of Neovim, your workspace, LSP, and more!
-      --
-      -- The easiest way to use Telescope, is to start by doing something like:
-      --  :Telescope help_tags
-      --
-      -- After running this command, a window will open up and you're able to
-      -- type in the prompt window. You'll see a list of `help_tags` options and
-      -- a corresponding preview of the help.
-      --
-      -- Two important keymaps to use while in Telescope are:
-      --  - Insert mode: <c-/>
-      --  - Normal mode: ?
-      --
-      -- This opens a window that shows you all of the keymaps for the current
-      -- Telescope picker. This is really useful to discover what Telescope can
-      -- do as well as how to actually do it!
-
-      -- [[ Configure Telescope ]]
-      -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
@@ -653,11 +577,12 @@ require('lazy').setup({
       format_on_save = function(bufnr)
         local disable_filetypes = { c = true, cpp = true }
         return {
-          timeout_ms = 500,
+          timeout_ms = 1000,
           lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
         }
       end,
       formatters_by_ft = {
+        python = { 'ruff_format', 'ruff_fix' },
         lua = { 'stylua' },
         javascript = { 'prettier' },
         typescript = { 'prettier' },
@@ -672,31 +597,7 @@ require('lazy').setup({
       },
       formatters = {
         prettier = {
-          prepend_args = {
-            '--tab-width',
-            '4',
-            '--print-width',
-            '100',
-            '--semi',
-            'true',
-            '--single-quote',
-            'false',
-            '--trailing-comma',
-            'all',
-            '--bracket-spacing',
-            'true',
-            '--bracket-same-line',
-            'false',
-            '--arrow-parens',
-            'always',
-            '--end-of-line',
-            'lf',
-            '--overrides',
-            '[{"files":"*.{tsx,jsx}","options":{"tabWidth":2}}]',
-          },
-          command = function()
-            return vim.fn.executable './node_modules/.bin/prettier' == 1 and './node_modules/.bin/prettier' or 'prettier'
-          end,
+          command = './node_modules/.bin/prettier',
         },
       },
     },
@@ -971,24 +872,39 @@ vim.o.background = 'dark' -- or "light" for light mode
 -- ]]
 
 -- Apply the colorscheme again to trigger the autocommands
-vim.cmd 'colorscheme kanagawa-dragon'
-vim.cmd [[highlight LineNr guibg=NONE]]
-vim.cmd [[highlight SignColumn guibg=NONE]]
-vim.opt.numberwidth = 4
-vim.cmd [[highlight MsgArea guibg=NONE guifg=#DCD7BA]]
-vim.cmd [[highlight GitSignsAdd guibg=NONE guifg=#76946A]]
-vim.cmd [[highlight GitSignsChange guibg=NONE guifg=#DCA561]]
-vim.cmd [[highlight GitSignsDelete guibg=NONE guifg=#C34043]]
-
+-- vim.cmd 'colorscheme kanagawa-dragon'
+-- vim.cmd [[highlight LineNr guibg=NONE]]
+-- vim.cmd [[highlight SignColumn guibg=NONE]]
+-- vim.opt.numberwidth = 4
+-- vim.cmd [[highlight MsgArea guibg=NONE guifg=#DCD7BA]]
+-- vim.cmd [[highlight GitSignsAdd guibg=NONE guifg=#76946A]]
+-- vim.cmd [[highlight GitSignsChange guibg=NONE guifg=#DCA561]]
+-- vim.cmd [[highlight GitSignsDelete guibg=NONE guifg=#C34043]]
+-- vim.cmd 'highlight QuickFixLine NONE'
 -- Set up borders for floating windows
-vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
-  border = 'rounded',
-})
+--
+--
 
-vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-  border = 'rounded',
-})
+vim.cmd 'colorscheme kanagawa-dragon'
 
+vim.api.nvim_set_hl(0, 'DiagnosticUnderlineError', { underline = true, undercurl = false, sp = '#C34043' }) -- Vibrant red
+vim.api.nvim_set_hl(0, 'DiagnosticUnderlineWarn', { underline = true, undercurl = false, sp = '#DCA561' }) -- Warm yellow
+vim.api.nvim_set_hl(0, 'DiagnosticUnderlineInfo', { underline = true, undercurl = false, sp = '#7AA89F' }) -- Aqua
+vim.api.nvim_set_hl(0, 'DiagnosticUnderlineHint', { underline = true, undercurl = false, sp = '#658594' }) -- Blue
+
+-- vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
+--   border = 'rounded',
+-- })
+--
+-- vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+--   border = 'rounded',
+-- })
+--
 vim.lsp.handlers['textDocument/documentHighlight'] = function() end
-
-vim.keymap.set('n', '<leader>t', ':split term://zsh<CR>')
+require('lspconfig').solidity_ls_nomicfoundation.setup {
+  settings = {
+    typescript = {
+      enabled = true,
+    },
+  },
+}

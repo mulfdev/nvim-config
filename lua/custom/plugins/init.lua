@@ -2,6 +2,8 @@
 --  I promise not to create any merge conflicts in this directory :)
 --
 -- See the kickstart.nvim README for more information
+--
+local lspconfig = require 'lspconfig'
 
 return {
   {
@@ -21,6 +23,45 @@ return {
   { 'mellow-theme/mellow.nvim' },
   {
     'rebelot/kanagawa.nvim',
+    config = function()
+      require('kanagawa').setup {
+        theme = 'dragon', -- Use the dragon variant
+        colors = {
+          theme = {
+            all = {
+              ui = {
+                bg_gutter = 'none', -- Makes the gutter transparent
+              },
+            },
+          },
+        },
+        overrides = function(colors)
+          local theme = colors.theme
+          return {
+            -- Keep line numbers slightly dimmed but visible
+            LineNr = { fg = theme.ui.special, bold = true, bg = 'none' },
+            -- Keep current line number highlighted
+            CursorLineNr = { fg = theme.ui.fg_dim, bg = 'none' },
+
+            -- Make sign column background match editor
+            SignColumn = { bg = 'none' },
+          }
+        end,
+      }
+    end,
+    lazy = false, -- Load immediately
+    priority = 1000, -- High priority to load before other UI elements
   },
-  { 'akinsho/toggleterm.nvim', version = '*', config = true },
+  {
+    'thesimonho/kanagawa-paper.nvim',
+    lazy = false,
+    priority = 1000,
+    opts = {},
+  },
+  lspconfig.eslint.setup {
+    -- No auto-fix, no formatting — just diagnostics
+    settings = {
+      format = false,
+    },
+  },
 }

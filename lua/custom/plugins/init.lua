@@ -59,9 +59,8 @@ return {
     opts = {},
   },
   lspconfig.eslint.setup {
-    -- No auto-fix, no formatting — just diagnostics
     settings = {
-      format = false,
+      format = true, -- Enable formatting
     },
   },
 }

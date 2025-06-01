@@ -597,7 +597,13 @@ require('lazy').setup({
       },
       formatters = {
         prettier = {
-          command = './node_modules/.bin/prettier',
+          command = 'prettier',
+          args = {
+            '--config-precedence',
+            'prefer-file',
+            '--stdin-filepath',
+            '$FILENAME',
+          },
         },
       },
     },
